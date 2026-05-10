@@ -1,5 +1,6 @@
 export { RenderProps1 } from "./RenderProps1";
 export { RenderProps2 } from "./RenderProps2";
+export { RenderProps3 } from "./RenderProps3";
 export { ControlProps } from "./ControlProps";
 export { CompoundComponents } from "./CompoundComponents";
 export { HighOrderComponent } from "./HighOrderComponent";
