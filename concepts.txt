@@ -1,0 +1,522 @@
+1)React Memo: cuándo optimizar componentes
+
+  Optimizar el rendimiento de una aplicación en React es una de las habilidades más valoradas en el desarrollo frontend actual. Comprender herramientas como React Memo y conocer el ecosistema que rodea a esta librería te posiciona como un profesional competitivo en una industria donde más del 40 % de los desarrolladores ya eligen React como su tecnología principal.
+
+  ¿Qué es React Memo y cuándo deberías usarlo?
+
+  React Memo es una función de orden superior (higher-order function) que permite memorizar un componente funcional. En la práctica, esto significa que el componente solo se va a volver a renderizar cuando sus props cambien. Si las props permanecen iguales, React omite el renderizado y reutiliza el resultado anterior.
+
+  Esto resulta especialmente útil en componentes que reciben las mismas props de forma repetida, ya que evita renderizados innecesarios y mejora el rendimiento general de la aplicación.
+
+  Sin embargo, hay una advertencia importante: no siempre es necesario utilizar React Memo. La recomendación es aplicarlo únicamente cuando detectes que un componente se está renderizando de forma innecesaria y que ese comportamiento está afectando el rendimiento real de tu aplicación.
+
+  ¿Qué conceptos avanzados complementan a React Memo?
+
+  Además de React Memo, existen otros conceptos avanzados que permiten construir aplicaciones de alto nivel:
+
+  Patrones de renderizado: estrategias para controlar cómo y cuándo se actualizan los componentes.
+  Enrutamiento: manejo de la navegación entre vistas dentro de una single page application.
+  Manejo del estado: herramientas como Context API, Zustand, Redux y máquinas de estado para administrar datos compartidos entre componentes.
+  Estos temas forman parte del aprendizaje progresivo en React con TypeScript y son fundamentales para cualquier desarrollador que quiera llevar sus habilidades al siguiente nivel.
+
+  ¿Por qué React lidera la demanda laboral en desarrollo frontend?
+
+  Los números hablan por sí solos. En 2023, más de 10,000 ofertas de trabajo en Estados Unidos buscaron específicamente desarrolladores con experiencia en React. Las empresas apuestan por esta tecnología porque permite construir aplicaciones robustas y eficaces.
+
+  Algunos datos que refuerzan esta tendencia:
+
+  Más del 40 % de los desarrolladores lo eligen como su herramienta principal.
+  Los desarrolladores de React se encuentran entre los mejor pagados de la industria.
+  Su ecosistema cuenta con más de 200,000 paquetes en NPM, lo que amplía enormemente las posibilidades de creación.
+  ¿Qué hace tan fuerte a la comunidad de React?
+
+  La mayor fortaleza de React es, sin duda, su comunidad activa y global. Con más de dos millones de preguntas en Stack Overflow, prácticamente cualquier problema que enfrentes ya habrá sido resuelto por alguien más. Esto hace que aprender y crecer en React sea mucho más accesible.
+
+  La combinación de popularidad, demanda laboral, salarios competitivos, un ecosistema expansible y una comunidad sólida convierte a React en la opción preferida por desarrolladores en todo el mundo. Si estás buscando una tecnología que abra puertas en la industria, dominar React y sus herramientas avanzadas como React Memo es un paso estratégico.
+
+  ¿Ya has utilizado React Memo en tus proyectos? Comparte tu experiencia y cuéntanos en qué casos te ha resultado más útil.
+
+2)Render Props y Composición en React: Ventajas y Desventajas
+  Resumen
+  Aprende a crear componentes flexibles y mantenibles en React con los patrones render props y composition. Verás cómo un componente padre delega el “cómo se pinta” al hijo mediante una función, maximizando la reutilización de lógica y reduciendo código, con tipado sólido en TypeScript. Además, se explican ventajas, desventajas y cómo evitar errores comunes como el prop drilling.
+
+  ¿Qué es render props y por qué mejora la reutilización?
+
+  El patrón render props consiste en pasar una función como prop para decidir el renderizado. Así, el padre controla la salida visual y el hijo solo expone datos o estado. Este enfoque aporta flexibilidad, mantenibilidad y reutilización al separar la lógica del diseño.
+
+  ¿Cómo funciona el primer ejemplo con función render?
+
+  Dos componentes: parent component y child component.
+  El hijo recibe una prop función llamada render que retorna un elemento JSX.
+  El hijo define un nombre, por ejemplo, "DevCode", y llama a render(nombre).
+  El padre decide el marcado: por ejemplo, un párrafo con “Hello, nombre”.
+  Fragmento de tipado y uso en TypeScript:
+
+
+  // Child
+  type ChildComponentProps = {
+    render: (name: string) => JSX.Element;
+  };
+
+  const ChildComponent: React.FC<ChildComponentProps> = ({ render }) => {
+    const name = 'DevCode';
+    return <div>{render(name)}</div>;
+  };
+
+  // Parent
+  const ParentComponent: React.FC = () => (
+    <ChildComponent render={(name) => <p>Hello, {name}</p>} />
+  );
+  ¿Qué aporta el tipado de TypeScript en las props?
+
+  Define la forma exacta de la función: parámetros y retorno.
+  Evita errores en tiempo de desarrollo y facilita el autocompletado.
+  Mejora la comunicación dentro del equipo al documentar contratos.
+  ¿Cómo aplicar render props para listas con data del padre?
+
+  Se crea la lógica en el padre: una función render que recibe un arreglo de strings y retorna nodos de React. El padre mantiene la data en un estado local con useState, y el hijo únicamente la pinta con un map dentro de elementos LI.
+
+  ¿Cómo tipar las props con TypeScript en padre e hijo?
+
+  El padre expone una interfaz con la firma de la función render.
+  El hijo declara una interfaz con la prop data: string[] y la recorre.
+  Fragmentos clave:
+
+
+  // Parent
+  interface ParentComponentProps {
+    render: (data: string[]) => React.ReactNode;
+  }
+
+  const ParentComponent: React.FC<ParentComponentProps> = ({ render }) => {
+    const [data] = React.useState<string[]>(/* array de strings */);
+    return <ul>{render(data)}</ul>;
+  };
+
+  // Child
+  interface ChildComponentProps {
+    data: string[];
+  }
+
+  const ChildComponent: React.FC<ChildComponentProps> = ({ data }) => (
+    <>
+      {data.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </>
+  );
+  ¿Qué sucede al integrar el parent component en la UI?
+
+  Se importa el parent component y el child component en la vista.
+  Se pasa la función render del padre que delega el renderizado al hijo.
+  Uso de integración:
+
+
+  <ParentComponent render={(data: string[]) => <ChildComponent data={data} />} />
+  Resultado: el padre controla la lógica y el hijo se encarga del pintado de la lista dentro de un UL.
+  Preparación del entorno: clonar el repositorio, ejecutar npm install, luego npm run dev y abrir el localhost.
+  ¿Cuáles son ventajas, desventajas y relación con composition?
+
+  El patrón render props convive muy bien con composition: construir interfaces complejas desde componentes pequeños que se combinan. En los ejemplos, el padre define la estructura y el hijo se especializa en pintar datos.
+
+  Ventajas.
+  Reutilización de lógica sin duplicar componentes.
+  Mantenibilidad y flexibilidad al separar responsabilidades.
+  Tipado con TypeScript que reduce errores.
+  Desventajas.
+  Riesgo de prop drilling si la función o datos viajan por múltiples niveles.
+  Curva de aprendizaje más exigente para personas nuevas en React.
+  Habilidades y keywords trabajadas.
+  Definir interfaces y types de props en TypeScript.
+  Usar React.FC con genéricos para tipar componentes.
+  Implementar funciones render que retornan JSX.Element o ReactNode.
+  Mapear arreglos a elementos LI con key estable.
+  Aplicar composition para escalar la UI.
+  ¿Qué casos de uso ves para aplicar el patrón de render props en tus componentes? Comparte tus ideas y dudas en los comentarios.
+  
+  Los Render Props son útiles en situaciones donde necesitas compartir lógica entre componentes sin duplicar código. Ejemplos reales incluyen:
+
+    Componentes de Formulario: Puedes tener un componente de formulario que maneje el estado y la validación, y pasar una función render para definir cómo se ve el formulario.
+
+    Listas Dinámicas: Un componente que obtiene datos de una API puede usar render props para permitir que diferentes componentes hijos definan cómo se muestran esos datos (ej. listas, tablas).
+
+    Autenticación: Un componente de autenticación puede manejar el proceso de login y permitir que otros componentes definan qué mostrar según si el usuario está autenticado o no.
+
+  Estos casos ilustran cómo Render Props fomentan la reutilización y la separación de responsabilidades en React.
+
+   Nota importante
+
+    El patrón Render Props fue muy popular antes de React Hooks (2019).
+
+    Hoy muchos casos se resuelven mejor con Custom Hooks, que hacen el código más simple.
+
+    Ejemplo moderno:
+
+
+    const data = useData();
+    en lugar de:
+
+
+    <DataProvider render={(data) => ... } />
+  https://github.com/platzi/rendering-patterns-in-react-final
+  https://github.com/platzi/rendering-patterns-in-react-base
+  https://www.typescriptlang.org/docs/handbook/react.html
+
+3)Control de Props en React: Comunicación entre Componentes Padres e Hijos
+
+  Resumen
+  Controla desde el componente padre el estado de un toggle hijo en React con TypeScript usando el patrón control props. Verás cómo definir props opcionales, manejar useState y notificar cambios para crear componentes reutilizables, mantenibles y con comunicación clara padre-hijo.
+
+  ¿Qué es control props y por qué usarlo en React?
+
+  Este patrón permite que el padre controle el comportamiento del hijo, mientras el hijo notifica su estado. Aquí, el hijo administra un boolean interno (encendido/apagado) y, cuando cambia, llama una función pasada por props que informa al padre.
+
+  Gestión del estado: el padre conoce y controla el estado del hijo.
+  Comunicación acotada: solo entre padre e hijo, fácil de razonar.
+  Reutilización y mantenibilidad: el hijo es personalizable y portable.
+  ¿Cómo fluye la comunicación padre-hijo?
+
+  El hijo guarda un estado local con useState iniciado desde isToggled.
+  Al alternar, calcula el nuevo valor y ejecuta onToggle(newValue) si existe.
+  El padre pasa isToggled y onToggle, y puede reflejar el estado en pantalla.
+  ¿Qué estructura de props y tipos en TypeScript?
+
+  ToggleProps con isToggled?: boolean y onToggle?: (value: boolean) => void.
+  Props opcionales con el signo “?”.
+  Valor inicial en el hijo: false por defecto para empezar apagado.
+  ¿Cómo construir el componente hijo toggle en TypeScript?
+
+  El hijo define sus props, inicializa su estado con useState y expone una función toggle que alterna el valor, actualiza el estado y notifica al padre si la función llega por props.
+
+
+  import React, { useState } from 'react';
+
+  type ToggleProps = {
+    isToggled?: boolean;
+    onToggle?: (value: boolean) => void;
+  };
+
+  const Toggle: React.FC<ToggleProps> = ({ isToggled = false, onToggle }) => {
+    const [internalToggle, setInternalToggle] = useState(isToggled);
+
+    const toggle = () => {
+      const newToggle = !internalToggle;
+      setInternalToggle(newToggle);
+      if (onToggle) onToggle(newToggle);
+    };
+
+    return (
+      <button onClick={toggle}>
+        {internalToggle ? 'on 🔛' : 'off 🤒'}
+      </button>
+    );
+  };
+
+  export default Toggle;
+  ¿Qué props y estado maneja el toggle?
+
+  isToggled: estado inicial opcional del toggle.
+  onToggle: función opcional para notificar al padre.
+  internalToggle: estado local que alterna entre true y false.
+  ¿Cómo renderiza y notifica el botón?
+
+  Un button con onClick llama a toggle.
+  La etiqueta del botón usa un ternario para mostrar “on” u “off”.
+  ¿Cómo controla el padre el estado del toggle?
+
+  El padre crea su propio estado, lo pasa como isToggled y entrega setToggleState como onToggle. Así refleja y controla el estado del hijo, además de mostrarlo en pantalla.
+
+
+  import React, { useState } from 'react';
+  import Toggle from './Toggle';
+
+  const Parent = () => {
+    const [toggleState, setToggleState] = useState(false);
+
+    return (
+      <div>
+        <Toggle isToggled={toggleState} onToggle={setToggleState} />
+        <p>Toggle is {toggleState ? 'on 🔛' : 'off 🤒'}</p>
+      </div>
+    );
+  };
+
+  export default Parent;
+  ¿Qué beneficios aporta este patrón?
+
+  Control total del flujo desde el padre.
+  Comunicación predecible y fácil de depurar.
+  Hijo personalizable y reutilizable en distintas vistas.
+  Mayor flexibilidad y mantenibilidad del código.
+  ¿Qué otro ejemplo construirías con control props? Cuéntalo en los comentarios y pongamos manos a la obra.
+
+4)Patrón Compound Components en React: Creación de un Componente de Tabs
+
+  Compound components en React para construir un sistema de tabs modular, flexible y tipado con TypeScript. El componente padre controla el estado, los hijos renderizan el contenido. Un enfoque claro para escalar interfaces sin perder simplicidad.
+
+¿Qué es el patrón compound components en React y cómo se aplica a tabs?
+
+El patrón compound components coordina varios componentes que trabajan juntos. El padre decide qué mostrar y el hijo se enfoca en renderizar. Aquí, el padre es un wrapper llamado Tabs y los hijos son Tab: el primero gestiona el estado local y los segundos muestran label y children.
+
+El padre controla el activeIndex y cambia al hacer clic.
+Los hijos solo reciben props y renderizan contenido.
+La composición hace el sistema más modular y flexible.
+¿Qué props y tipos se definen?
+
+Tab recibe: label: string y children: ReactNode.
+Tabs recibe: children: ReactNode.
+Se tipa con TypeScript usando interfaces y React.FC.
+¿Qué utilidades de React se emplean?
+
+Estado con useState para el índice activo.
+Normalización de hijos con React.Children.toArray.
+Validación con React.isValidElement.
+Manejo de eventos con onClick.
+Uso de key para cada elemento de lista.
+Código del componente hijo Tab:
+
+
+import React, { ReactNode } from 'react';
+
+interface TabProps {
+  label: string;
+  children: ReactNode;
+}
+
+export const Tab: React.FC<TabProps> = ({ label, children }) => {
+  return (
+    <div>
+      <em>{label}</em>
+      <span>{children}</span>
+    </div>
+  );
+};
+¿Cómo se construye el componente tabs con estado y validación de hijos?
+
+El componente Tabs necesita un estado local para saber qué pestaña está activa y una función para actualizarla al hacer clic. Además, convierte los hijos a arreglo y filtra solo elementos válidos de React. Luego, renderiza una lista de labels y un área de contenido.
+
+Se inicializa activeIndex en 0.
+Se define handleTabClick(index: number) para cambiar el estado.
+Se crea tabElements con Children.toArray(children) y isValidElement.
+Se mapea para pintar un <li> por cada tab con su label.
+Se muestra el contenido de tabElements[activeIndex] dentro de tabContent.
+Código del componente padre Tabs:
+
+
+import React, { ReactNode, useState, Children, isValidElement } from 'react';
+
+interface TabsProps {
+  children: ReactNode;
+}
+
+export const Tabs: React.FC<TabsProps> = ({ children }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleTabClick = (index: number) => {
+    setActiveIndex(index);
+  };
+
+  const tabElements = Children.toArray(children).filter((child) =>
+    isValidElement(child)
+  );
+
+  return (
+    <div>
+      <ul>
+        {tabElements.map((child: any, index: number) => (
+          <li
+            key={index}
+            className={index === activeIndex ? 'tab active' : ''}
+            onClick={() => handleTabClick(index)}
+          >
+            {child.props.label}
+          </li>
+        ))}
+      </ul>
+
+      <div className={'tabContent'}>
+        {tabElements[activeIndex] as React.ReactNode}
+      </div>
+    </div>
+  );
+};
+¿Cómo se usa en el componente padre con etiquetas y contenido?
+
+Una vez definidos Tabs y Tab, se reemplaza el contenedor por Tabs y se agregan varios Tab con su label y children. Al hacer clic, cambia el contenido activo sin lógica extra en los hijos.
+
+El padre define las pestañas.
+Cada hijo incluye su label y su contenido.
+La interacción actualiza el índice activo y renderiza el nodo correspondiente.
+Ejemplo de uso:
+
+
+<Tabs>
+  <Tab label="Jirafa">🦒</Tab>
+  <Tab label="Delfín">🐬</Tab>
+  <Tab label="Lagarto">🦎</Tab>
+</Tabs>
+
+https://www.patterns.dev/react/compound-pattern/
+
+5) Cómo crear un Higher Order Component con TypeScript
+  high order component en React con TypeScript para mostrar un loader condicional. Verás cómo una función recibe un componente y devuelve otro, cómo tipar props genéricas con T y por qué, con la llegada de los hooks, este patrón se usa menos. Todo con un ejemplo claro: withLoading.
+
+  ¿Qué es un high order component en React y para qué sirve?
+
+  Un high order component es una función que recibe un componente y devuelve otro componente. En React se usa para inyectar información, estilos o lógica de forma reutilizable. Aquí se aplica para mostrar un texto con loader según una prop booleana llamada isLoading. • Recibe un componente y retorna un componente envuelto con lógica extra. • Controla un loader con la prop booleana isLoading. • No hay llamada a API real: el estado se pone manualmente en true o false. • Separa responsabilidades: el HOC maneja el loading, el componente hijo renderiza el contenido. • Nota de contexto: hoy este patrón se usa menos por hooks y custom hooks.
+
+  ¿Cómo implementar withLoading con TypeScript y props genéricas?
+
+  La clave es tipar el HOC con un genérico T para aceptar cualquier conjunto de props adicionales, y exigir que isLoading sea un booleano. Así el HOC es flexible y seguro. • T extiende de object para aceptar cualquier forma de props. • isLoading es estrictamente booleano: controla el loader. • Las demás props se pasan al componente original. • Se usa React.ComponentType para aceptar componentes funcionales o de clase. • El cast ayuda a preservar el tipo de las props originales.
+
+  ¿Qué resuelve el tipado genérico T? • HOC reutilizable con distintos componentes y props. • Previene errores de tipos al pasar props no esperadas. • Mantiene la intellisense de TypeScript en componentes envueltos.
+
+  ¿Cómo usar el HOC con un componente de usuario?
+
+  Primero se define un componente que recibe un nombre. Luego se envuelve con withLoading y se renderiza variando isLoading. • Con isLoading en true: muestra “Loading…”. • Con isLoading en false: renderiza el componente con “Hello, DevCode!”. • El HOC centraliza el comportamiento del loader y evita duplicar lógica.
+
+  ¿Ya lo probaste? Comparte en comentarios cómo quedó tu withLoading y cuéntame si has usado high order components o si prefieres custom hooks para esta lógica.
+
+  tro uso comun que le podemos dar a los High-Order Components es la gestión de autenticación.
+
+En este caso queremos que un HOC envuelva cualquier componente y verifique si el usuario está autenticado, y si no, enviarlo al Login.
+
+
+  // HOC para proteger rutas
+  const withAuth = (WrappedComponent) => {
+    return (props) => {
+      const isAuthenticated = !!localStorage.getItem("token"); // Simulación de autenticación
+
+      return isAuthenticated ? (
+        <WrappedComponent {...props} />
+      ) : (
+        <Navigate to="/login" />
+      );
+    };
+  };
+
+  // Componente normal (Dashboard)
+  const Dashboard = () => {
+    return <h2>Bienvenido al Dashboard</h2>;
+  };
+
+  // Componente protegido
+  const ProtectedDashboard = withAuth(Dashboard);
+  ```Este es uno de los usos mas comunes, espero les sirva de ayuda.
+
+  Para los que quieren ejemplos reales, la única vez que implemente HOCS fue para implementar error boundary, ya que el proyecto estaba en componentes de clases. Básicamente envolvia los componentes que quería capturar un error y si lo capturaba mostraba un ErrorPage y si no el componente que se pasaba por props.
+
+  6)Container Presenter: separar lógica y UI en React
+
+        Resumen
+    Aprende a implementar el patrón de diseño Container Presenter en React con TypeScript: separa la lógica de la UI, organiza mejor tu código y gana escalabilidad. Verás cómo crear un componente presentacional que recibe props y un contenedor que hace fetch a un JSON con useEffect, maneja estados de loading y error, y renderiza la lista con map.
+
+    ¿Qué es el patrón container presenter y por qué importa?
+
+    Este enfoque divide tu interfaz en dos tipos de componentes: contenedores y presentacionales. Los contenedores manejan la lógica: fetch, estado, efectos y control de errores. Los presentacionales reciben props y solo pintan la UI sin lógica. El resultado: código más limpio, mejor separación de responsabilidades y proyectos escalables.
+
+    ¿Cómo separa la lógica de la presentación?
+
+    Contenedor: maneja useState, useEffect, fetch, loading y error.
+    Presentacional: recibe props y renderiza HTML y estilos.
+    Comunicación por props: el contenedor pasa la data al presentacional.
+    Beneficio: mantenimiento simple y reutilización de componentes.
+    ¿Cuáles son las palabras clave y habilidades que aplicarás?
+
+    TypeScript: definición de tipos para la data y props.
+    useState y useEffect: gestión de estado y efectos para fetch.
+    async/await con try/catch/finally: manejo robusto de solicitudes.
+    map, key, React Fragment, alt: renderizado de listas accesibles.
+    JSON mock en carpeta public: fetch local sin depender de una API externa.
+    ¿Cómo crear el componente presentacional DataPresenter?
+
+    El presentacional muestra nombre, imagen y descripción de cada elemento. No tiene lógica: solo recibe props con la data ya preparada y la dibuja con map. Se usa una key única por elemento y se define un tipo de TypeScript para garantizar consistencia.
+
+    ¿Qué tipos de TypeScript definen la data?
+
+    DataItem: describe cada elemento: id, name, description, image.
+    DataPresenterProps: define que el componente recibe data: DataItem[].
+
+    // DataPresenter.tsx
+    import React from 'react';
+
+    type DataItem = {
+      id: number;
+      name: string;
+      description: string;
+      image: string;
+    };
+
+    type DataPresenterProps = {
+      data: DataItem[];
+    };
+
+    function DataPresenter({ data }: DataPresenterProps) {
+      return (
+        <>
+          {data.map((item) => (
+            <React.Fragment key={item.id}>
+              <img src={item.image} alt={item.name} />
+              <em>{item.description}</em>
+            </React.Fragment>
+          ))}
+        </>
+      );
+    }
+
+    export default DataPresenter;
+    ¿Cómo renderizar la lista con map y keys?
+
+    Usa map para iterar los elementos.
+    Asigna una key con el id.
+    Incluye alt descriptivo para la imagen.
+    Mantén el componente libre de lógica.
+    ¿Cómo construir el contenedor DataContainer y hacer fetch?
+
+    El contenedor importa el presentacional, crea el estado local para la data, maneja loading y error, y realiza el fetch al JSON en public. Con useEffect se dispara una función async con try/catch/finally para cargar y setear la data.
+
+
+    // DataContainer.tsx
+    import React, { useEffect, useState } from 'react';
+    import DataPresenter from './DataPresenter';
+
+    type DataItem = {
+      id: number;
+      name: string;
+      description: string;
+      image: string;
+    };
+
+    function DataContainer() {
+      const [data, setData] = useState<DataItem[]>([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState<string | null>(null);
+
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await fetch('/Data/data.json');
+            if (!response.ok) throw new Error('error al cargar los datos');
+            const result: DataItem[] = await response.json();
+            setData(result);
+          } catch (err) {
+            setError(`error al cargar los datos: ${String(err)}`);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchData();
+      }, []);
+
+      if (loading) return <p>Cargando...</p>;
+      if (error) return <p>{error}</p>;
+      return <DataPresenter data={data} />;
+    }
+
+    export default DataContainer;
+    ¿Cómo manejar estados loading y error?
+
+    loading: inicia en true y pasa a false en finally.
+    error: guarda el mensaje en catch para mostrarlo en pantalla.
+    Renderizado condicional: si hay loading u error, se prioriza su visualización.
+    Cuando todo va bien: se muestra <DataPresenter data={data} />.
